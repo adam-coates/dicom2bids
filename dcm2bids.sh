@@ -133,9 +133,15 @@ cat << EOF
 [1;35m|____/___\____\___/|_|  |_| |_____| |____/___|____/|____/ [0m
 
 [1;36mAdam.C[0m
-[1;34mv.2[0m
+[1;34mv.2.5[0m
+***************************************************************************
+[1;32mRelease Notes v2.5:         		       						       
+• Add a check for the nifti directory when the dicom  
+   directory does not contain any session folder[0m 
+***************************************************************************
+____________________________________________________________________________
 
-- A helper script to convert dicoms into BIDS format [1;39mquickly and easily![0m
+• A helper script to convert dicoms into BIDS format [1;39mquickly and easily![0m
 
 Script uses:
 	‣ dcm2niix: ${DCM2NIIX_STATUS}
@@ -143,7 +149,7 @@ Script uses:
 	‣ dcmunpack: ${DCMUNPACK_STATUS}
 	‣ dcm2bids_scaffold: ${DCM2BIDS_SCAFFOLD_STATUS} 
 	‣ jq (to edit/add intendedfor to fmap json): ${JQ_STATUS}
-_____________________________________________________________
+____________________________________________________________________________
 EOF
 }
 
@@ -221,11 +227,13 @@ if [ "${#sessions_folders[@]}" -gt 1 ] && [ "${sessions_folders[0]}" != "DICOM" 
     menu "Select a folder:" ses "${sessions_folders[@]}"
     dicom_path=$dicomdir/$dicom_sub/$ses
 else
+    checksessions=1
     ses="ses-1"
     dicom_path=$dicomdir/$dicom_sub/
 fi
 echo "_____________________________________________________________"
 }
+
 
 getbidssubject() {
 subject=$(generate_subject_id "$dicom_sub")
@@ -243,6 +251,21 @@ if [[ "$response" != "y" ]]; then
 fi
 }
 
+doublecheckses() {
+clear
+cat << EOF
+[1;31m The current path to search dicoms is ${dicom_path} but this might not reflect which session the dicoms are for!
+
+Currently the dicoms will be unpacked to: ${nifti_dir}/${subject}/${ses}[0m
+
+EOF
+
+read -p "Would you like to change the sessions folder from $ses to another session in the nifti directory (this will not effect the dicom unpacking from $dicom_path):   " response
+    if [[ "$response" == "y" ]]; then
+        read -p "Enter the ses (e.g. ses-1 ses-2 etc.)  " ses
+    fi
+    
+}
 
 generate_subject_id() {
     dicom_sub=$1
@@ -469,6 +492,9 @@ getdicompath
 
 #Convert dicom subject into a suitable BIDS subject name
 getbidssubject
+
+#Double check the session 
+[ $checksessions -eq 1 ] && doublecheckses
 
 # Create BIDS structure if not already created 
 [ -f "$niidir/participants.tsv" ] || dcm2bids_scaffold -o $niidir

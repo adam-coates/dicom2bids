@@ -2,6 +2,15 @@
 
 > For use with MRI data
 
+---
+
+Release notes (version 2.5)
+
+- Add a check for the nifti directory when the dicom directory does not contain any session folder
+  > Ensures that the dicoms are unpacked to the correct session folder for subjects with multiple sessions
+
+---
+
 - Convert dicoms to BIDS using dcm2niix and without the need of a `.json` configuration file
 
 - Script converts all dicoms and then leads the user through a renaming and moving files process
