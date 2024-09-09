@@ -36,7 +36,7 @@ Release notes (version 2.5)
 ## Installation
 
 1. Clone repo
-   `git clone git@github.com:adam-coates/dicom2bids.git`
+   `git clone https://github.com/adam-coates/dicom2bids.git`
 
 2. Ensure that [dcm2niix](https://github.com/rordenlab/dcm2niix) is installed
 
