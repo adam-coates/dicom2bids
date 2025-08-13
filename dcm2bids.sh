@@ -292,7 +292,7 @@ extractdicominfo() {
 
 mkdir -p $niidir/$subject/$ses
 echo "Roughly unpacking dicoms"
-spinner /storage/adam/CLAUS_3T/dcm2niix/dcm2niix -z y -f %p_%s  -o $niidir/$subject/$ses $dicom_path
+spinner /home/jovyan/dcm2niix -z y -f %p_%s  -o $niidir/$subject/$ses $dicom_path
 #
 }
 
